@@ -24,9 +24,9 @@ function draw() {
   ctxx.clip();
   blinkY.fill(255,255,255);
   blinkY.noStroke();
-  blinkY.ellipse(130, 50, 20, 20);
+  blinkY.ellipse(127, 50, 20, 20);
   blinkY.fill(0,0,255);
-  blinkY.ellipse(130, 50, 13, 13);
+  blinkY.ellipse(127, 50, 13, 13);
   blinkY.fill(255,255,255);
   blinkY.ellipse(160, 50, 20, 20);
   blinkY.fill(0,0,255);
