@@ -1,31 +1,38 @@
-let characterOne;
-let characterTwo;
+let characters;
 
 function setup() {
   createCanvas(500, 500);
-  characterOne = new Character(100, 100, 50);
-  characterTwo = new Character(100, 300, 80);
+  characters = [
+    new Character(100, 100, 50),
+    new Character(100, 300, 80),
+    new Character(200, 10, 30),
+  ];
 }
 
 function draw() {
   background(220);
-  characterOne.draw();
-  characterTwo.draw();
+
+  for(let i = 0; i < characters.length; i++) {
+    characters[i].draw();
+  }
 }
 
 function mousePressed() {
-  characterOne.mousePressed();
-  characterTwo.mousePressed();
+  for(let i = 0; i < characters.length; i++) {
+    characters[i].mousePressed();
+  }
 }
 
 function mouseReleased() {
-  characterOne.mouseReleased();
-  characterTwo.mouseReleased();
+  for(let i = 0; i < characters.length; i++) {
+    characters[i].mouseReleased();
+  }
 }
 
 function mouseDragged() {
-  characterOne.mouseDragged();
-  characterTwo.mouseDragged();
+  for(let i = 0; i < characters.length; i++) {
+    characters[i].mouseDragged();
+  }
 }
 
 class Character {
@@ -50,12 +57,18 @@ class Character {
     line(this.x + this.size / 4, this.y + this.size - 15, this.x + this.size - this.size / 4, this.y + this.size - 15);
     }
 
+    contains(x, y){
+      let insideX = x >= this.x && x <= this.x + this.size; 
+      let insideY = y >= this.y && y <= this.y + this.size;
+
+      console.log("in x: ", insideX);
+      console.log("in y: ", insideY);
+      return insideX && insideY;
+    }
+
   mousePressed() {
-    let insideX = mouseX >= this.x && mouseX <= this.x + this.size; 
-    let insideY = mouseY >= this.y && mouseY <= this.y + this.size;
-    console.log("in x: ", insideX);
-    console.log("in y: ", insideY);
-    let inside = insideX && insideY;
+    let inside = this.contains(mouseX, mouseY);
+
     if(inside) {
       this.dragging = true;
       this.dragStartX = mouseX;
