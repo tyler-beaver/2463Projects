@@ -1,93 +1,60 @@
-let characters;
+var brushColor;
 
 function setup() {
-  createCanvas(500, 500);
-  characters = [
-    new Character(100, 100, 50),
-    new Character(100, 300, 80),
-    new Character(200, 10, 30),
-  ];
+  createCanvas(700, 500);
+  background(255)
+  brushColor = color(0);
 }
 
 function draw() {
-  background(220);
-
-  for(let i = 0; i < characters.length; i++) {
-    characters[i].draw();
-  }
-}
-
-function mousePressed() {
-  for(let i = 0; i < characters.length; i++) {
-    characters[i].mousePressed();
-  }
-}
-
-function mouseReleased() {
-  for(let i = 0; i < characters.length; i++) {
-    characters[i].mouseReleased();
-  }
-}
-
-function mouseDragged() {
-  for(let i = 0; i < characters.length; i++) {
-    characters[i].mouseDragged();
-  }
-}
-
-class Character {
-  constructor(x, y, size) {
-      this.x = x;
-      this.y = y;
-      this.size = size;
-      this.dragging = false;
-      this.dragStartX = -1;
-      this.dragStartY = -1;
-      this.characterStartX = -1;
-      this.characterStartY = -1;
+  if (mouseIsPressed) {
+    if (mouseX <= 30) {
+      if (mouseY <= 30) {
+        brushColor = color(255, 0, 0);
+      } else if (mouseY <= 60) {
+        brushColor = color(255, 140, 0);
+      } else if (mouseY <= 90) {
+        brushColor = color(255, 255, 0);
+      } else if (mouseY <= 120) {
+        brushColor = color(0, 255, 0);
+      } else if (mouseY <= 150) {
+        brushColor = color(0, 255, 255);
+      } else if (mouseY <= 180) {
+        brushColor = color(0, 0, 255);
+      } else if (mouseY <= 210) {
+        brushColor = color(255, 0, 255);
+      } else if (mouseY <= 240) {
+        brushColor = color(150, 75, 0);
+      } else if (mouseY <= 270) {
+        brushColor = color(255, 255, 255);
+      } else if (mouseY <= 300) {
+        brushColor = color(0, 0, 0);
+      }
     }
-
-  draw() {
-    fill(255);
-    square(this.x, this.y, this.size);
-    fill(0);
-    circle(this.x + 10, this.y + 10, 10);
-    circle(this.x + this.size - 10, this.y + 10, 10);
-    stroke(0);
-    line(this.x + this.size / 4, this.y + this.size - 15, this.x + this.size - this.size / 4, this.y + this.size - 15);
-    }
-
-    contains(x, y){
-      let insideX = x >= this.x && x <= this.x + this.size; 
-      let insideY = y >= this.y && y <= this.y + this.size;
-
-      console.log("in x: ", insideX);
-      console.log("in y: ", insideY);
-      return insideX && insideY;
-    }
-
-  mousePressed() {
-    let inside = this.contains(mouseX, mouseY);
-
-    if(inside) {
-      this.dragging = true;
-      this.dragStartX = mouseX;
-      this.dragStartY = mouseY;
-      this.characterStartX = this.x;
-      this.characterStartY = this.y;
-    }
+    stroke(brushColor);
+    strokeWeight(10);
+    line(mouseX, mouseY, pmouseX, pmouseY);
   }
 
-  mouseDragged() {
-    if(this.dragging) {
-      this.x = this.characterStartX + (mouseX - this.dragStartX);
-      this.y = this.characterStartY + (mouseY - this.dragStartY);
-    }
-  }
-
-  mouseReleased() {
-    if(this.dragging) {
-      this.dragging = false;
-    } 
-  }
+  noStroke();
+  fill(255, 0, 0);
+  rect(0, 0, 30, 30);
+  fill(255, 140, 0);
+  rect(0, 30, 30, 30);
+  fill(255, 255, 0);
+  rect(0, 60, 30, 30);
+  fill(0, 255, 0);
+  rect(0, 90, 30, 30)
+  fill(0, 255, 255);
+  rect(0, 120, 30, 30);
+  fill(0, 0, 255);
+  rect(0, 150, 30, 30);
+  fill(255, 0, 255);
+  rect(0, 180, 30, 30);
+  fill(150, 75, 0);
+  rect(0, 210, 30, 30);
+  fill(255, 255, 255);
+  rect(0, 240, 30, 30);
+  fill(0, 0, 0);
+  rect(0, 270, 30, 30);
 }
