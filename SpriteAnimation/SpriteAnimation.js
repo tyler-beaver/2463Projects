@@ -1,67 +1,88 @@
 let spelunkyGuy;
-let x = 200;
-let y = 200;
-let r = 0;
-let startTime = 5;
-let timeRemaining = startTime;
-let score = 0;
-let topScore = 30;
-let previousScores = [];
-// let gameFont;
+let spelunkyGreen;
+let spelunkyRobot;
+let spelunkyGuyWalkingAnimation;
+let spelunkyGreenWalkingAnimation;
+let spelunkyRobotWalkingAnimation;
 
 function preload(){
   spelunkyGuy = loadImage("assets/SpelunkyGuy.png");
-  // gameFont = loadFont("assets/fontname.ttf") if I download the font file
+  spelunkyGreen = loadImage("assets/SpelunkyGreen.png");
+  spelunkyRobot = loadImage("assets/SpelunkyRobot.png")
 }
 
 function setup() {
   createCanvas(700, 600);
   imageMode(CENTER);
-  angleMode(DEGREES);
+  spelunkyGuyWalkingAnimation = new WalkingAnimation(spelunkyGuy, 80, 80, 300, 200, 9);
+  spelunkyGreenWalkingAnimation = new WalkingAnimation(spelunkyGreen, 80, 80, 200, 300, 9);
+  spelunkyRobotWalkingAnimation = new WalkingAnimation(spelunkyRobot, 80, 80, 400, 400, 9);
 }
 
 function draw() {
-  background(220); //can remove background to add trail 
-
-  textFont('Arial'); //can call google font here, might have to download font and add to assets folder
-  textSize(20);
-  text("Time: " + ceil(timeRemaining), 50, 50); //could do timeRemaining.width - 200 to set related to width
-  timeRemaining -= deltaTime / 1000;
-
-  if (r >= 350) {
-    r -= 360;
-  }
-
-  if (timeRemaining < 0) {
-    timeRemaining = startTime;
-    topScore = max(topScore, score);
-    previousScores.push(score);
-    score = 0;
-  }
-
-  let scoreY = 50;
-  text("Score: " + score, 550, 50);
-  text("Top Score: " + topScore, 250, height-20);
- 
-  for (let i = previousScores.length - 1; i >= max(0, previousScores.length - 3); i--) {
-    scoreY += 20;
-    text(previousScores[i], 20, scoreY);
-  }
-  
-  push();
-  translate(x, y)
-  rotate(r); 
-  //r += .1; //to rotate 
-  scale(0.5, 0.5);
-  image(spelunkyGuy, 300, 250)
-  pop();
+  background(220);
+  spelunkyGuyWalkingAnimation.draw();
+  spelunkyGreenWalkingAnimation.draw();
+  spelunkyRobotWalkingAnimation.draw();
 }
 
-function keyTyped() {
-  if (key === ' ') {
-    print("space!")
-    if ( r > 350 || r < 10) {
-      score += 10;
+  function keyPressed() {
+    spelunkyGuyWalkingAnimation.keyPressed(RIGHT_ARROW, LEFT_ARROW);
+    spelunkyGreenWalkingAnimation.keyPressed(LEFT_ARROW, RIGHT_ARROW);
+    spelunkyRobotWalkingAnimation.keyPressed(RIGHT_ARROW, LEFT_ARROW);
+  }
+
+  function keyReleased() {
+    spelunkyGuyWalkingAnimation.keyReleased(RIGHT_ARROW, LEFT_ARROW);
+    spelunkyGreenWalkingAnimation.keyReleased(LEFT_ARROW, RIGHT_ARROW);
+    spelunkyRobotWalkingAnimation.keyReleased(RIGHT_ARROW, LEFT_ARROW);
+  }
+
+  class WalkingAnimation {
+    constructor(sprites, sw, sh, dx, dy, animationLength) {
+      this.sprites = sprites;
+      this.sw = sw;
+      this.sh = sh;
+      this.dx = dx;
+      this.dy = dy;
+      this.u = 0; 
+      this.v = 0;
+      this.animationLength = animationLength;
+      this.currentFrame = 0;
+      this.moving = 0;
+      this.xDirection = 1;
+    }
+
+    draw() {
+      this.u = (this.moving != 0) ? this.currentFrame % this.animationLength : 0;
+
+      push();
+      translate(this.dx, this.dy);
+      scale(this.xDirection, 1);
+      image(this.sprites, 0, 0, this.sw, this.sh, this.u * this.sw, this.v * this.sh, this.sw, this.sh);
+      pop();
+
+      if (frameCount % 6 == 0) {
+        this.currentFrame ++;
+      }
+      this.dx += this.moving;
+    }
+
+    keyPressed(right, left) {
+        if (keyCode === right) {
+          this.moving = 1;
+          this.xDirection = 1;
+          this.currentFrame = 1;
+        } else if (keyCode === left) {
+          this.moving = -1;
+          this.xDirection = -1;
+          this.currentFrame = 1;
+      }
+    }
+
+    keyReleased(right, left) {
+      if (keyCode === right || keyCode === left) {
+        this.moving = 0;
+      }
     }
   }
-}
