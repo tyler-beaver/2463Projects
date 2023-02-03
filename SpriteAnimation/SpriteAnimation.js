@@ -1,11 +1,14 @@
+//sprite character variables 
 let spelunkyGuy;
 let spelunkyGreen;
 let spelunkyRobot;
+//sprite animation variables 
 let spelunkyGuyWalkingAnimation;
 let spelunkyGreenWalkingAnimation;
 let spelunkyRobotWalkingAnimation;
 
 function preload(){
+  //sprite images implemented
   spelunkyGuy = loadImage("assets/SpelunkyGuy.png");
   spelunkyGreen = loadImage("assets/SpelunkyGreen.png");
   spelunkyRobot = loadImage("assets/SpelunkyRobot.png")
@@ -14,6 +17,7 @@ function preload(){
 function setup() {
   createCanvas(700, 600);
   imageMode(CENTER);
+  //creating new character instances 
   spelunkyGuyWalkingAnimation = new WalkingAnimation(spelunkyGuy, 80, 80, 300, 200, 9);
   spelunkyGreenWalkingAnimation = new WalkingAnimation(spelunkyGreen, 80, 80, 200, 300, 9);
   spelunkyRobotWalkingAnimation = new WalkingAnimation(spelunkyRobot, 80, 80, 400, 400, 9);
@@ -21,18 +25,21 @@ function setup() {
 
 function draw() {
   background(220);
+  //drawing the characters 
   spelunkyGuyWalkingAnimation.draw();
   spelunkyGreenWalkingAnimation.draw();
   spelunkyRobotWalkingAnimation.draw();
 }
 
   function keyPressed() {
+    //keys for walking
     spelunkyGuyWalkingAnimation.keyPressed(RIGHT_ARROW, LEFT_ARROW);
     spelunkyGreenWalkingAnimation.keyPressed(LEFT_ARROW, RIGHT_ARROW);
     spelunkyRobotWalkingAnimation.keyPressed(RIGHT_ARROW, LEFT_ARROW);
   }
 
   function keyReleased() {
+    //keys to stop walking
     spelunkyGuyWalkingAnimation.keyReleased(RIGHT_ARROW, LEFT_ARROW);
     spelunkyGreenWalkingAnimation.keyReleased(LEFT_ARROW, RIGHT_ARROW);
     spelunkyRobotWalkingAnimation.keyReleased(RIGHT_ARROW, LEFT_ARROW);
