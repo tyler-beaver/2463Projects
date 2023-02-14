@@ -2,14 +2,6 @@
     is dead dont let them click it again, make bugs continuous
 */
 
-let spelunkyGuy;
-let spelunkyGreen;
-let spelunkyRobot;
-
-let spelunkyGuyWalkingAnimation;
-let spelunkyGreenWalkingAnimation;
-let spelunkyRobotWalkingAnimation;
-
 let spriteSheetFilenames = ["badBug.png", "GoodBug.png"];
 let spriteSheets = [];
 let animations = [];
@@ -20,7 +12,7 @@ const GameState = {
   GameOver: "GameOver"
 };
 
-let game = { score: 0, maxScore: 0, maxTime: 20, elapsedTime: 0, totalSprites: 0, state: GameState.Start, targetSprite: 0};
+let game = { score: 0, maxScore: 0, maxTime: 30, elapsedTime: 0, totalSprites: 0, state: GameState.Start, targetSprite: 0};
 
 function preload(){
   for (let i = 0; i < spriteSheetFilenames.length; i++) {
@@ -39,11 +31,11 @@ function setup() {
 function reset() {
   game.elapsedTime = 0;
   game.score = 0;
-  game.totalSprites = random(30, 50);
+  game.totalSprites = random(25, 70);
 
   animations = [];
   for (let i = 0; i < game.totalSprites; i++) {
-    animations[i] = new WalkingAnimation(random(spriteSheets), 80, 80, random(10, 690), random(10, 590), 3, random(1, 10), 3, random([0, 1]));
+    animations[i] = new WalkingAnimation(random(spriteSheets), 80, 80, random(10, 690), random(10, 590), 3, random(1, 7), 3, random([0, 1]));
   }
 }
 
@@ -83,11 +75,13 @@ function draw() {
       fill(255);
       textSize(40);
       textAlign(CENTER);
-      text("Squish Game", 350, 300);
+      text("Squish Game!", 350, 280);
       textSize(20);
-      text("Press Any Key To Start", 350, 340);
+      text("Press Any Key To Start:", 350, 310);
       textSize(20);
-      text("Only Click The Brown Bugs!", 350, 380);
+      text("Directions:", 350, 380);
+      text("Only Click The Brown Bugs To Gain Points!", 350, 410);
+      text("If You Click A Blue Bug You Lose A Point!", 350, 440);
       break;
   }
 }
