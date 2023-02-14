@@ -107,19 +107,23 @@ function mousePressed() {
       if (contains) {
         if (animations[i].moving != 0) {
           animations[i].stop();
-          if (animations[i].sprites === spriteSheets[game.targetSprite])
+          if (animations[i].sprites === spriteSheets[game.targetSprite]) {
           game.score += 1;
-          else
+          } else {
           game.score -= 1;
+          }
         } else {
-          if (animations[i].xDirection === 1)
+          if (animations[i].xDirection === 1) {
             animations[i].moveRight();
-          else
+          } else {
             animations[i].moveLeft();
+          }
         }
+        animations[i].stop();
       }
     }
       break;
+      
   }
 }
 
@@ -194,7 +198,6 @@ function mousePressed() {
 
     stop() {
       this.moving = 0;
-      this.u = 7;
-      this.v = 8;
+      this.u = 3;
     }
   }
