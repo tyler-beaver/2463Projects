@@ -1,7 +1,3 @@
-/* TODO: add death animation, make game harder as directions say, once bug 
-    is dead dont let them click it again, make bugs continuous
-*/
-
 let spriteSheetFilenames = ["badBug.png", "GoodBug.png"];
 let spriteSheets = [];
 let animations = [];
@@ -31,11 +27,11 @@ function setup() {
 function reset() {
   game.elapsedTime = 0;
   game.score = 0;
-  game.totalSprites = random(25, 70);
+  game.totalSprites = 50;
 
   animations = [];
   for (let i = 0; i < game.totalSprites; i++) {
-    animations[i] = new WalkingAnimation(random(spriteSheets), 80, 80, random(10, 690), random(10, 590), 3, random(1, 7), 3, random([0, 1]));
+    animations[i] = new WalkingAnimation(random(spriteSheets), 80, 80, random(10, 690), random(10, 590), 3, random(1, 3), 3, random([0, 1]));
   }
 }
 
@@ -57,6 +53,7 @@ function draw() {
       if (currentTime < 0) {
         game.state = GameState.GameOver;
       }
+
       break;
 
     case GameState.GameOver:
@@ -80,7 +77,7 @@ function draw() {
       text("Press Any Key To Start:", 350, 310);
       textSize(20);
       text("Directions:", 350, 380);
-      text("Only Click The Brown Bugs To Gain Points!", 350, 410);
+      text("Click The Brown Bugs To Gain Points!", 350, 410);
       text("If You Click A Blue Bug You Lose A Point!", 350, 440);
       break;
   }
@@ -143,6 +140,7 @@ function mousePressed() {
       this.speed = speed;
       this.framerate = framerate * speed;
       this.vertical = vertical; 
+      this.speedIncrement = 0.012;
     }
 
     draw() {
@@ -167,6 +165,10 @@ function mousePressed() {
       } else {
         this.dx += this.moving * this.speed;
         this.move(this.dx, this.sw / 4, width - this.sw / 3);
+      }
+
+      if (ceil(game.maxTime - game.elapsedTime) % 5 == 0) {
+        this.speed += this.speedIncrement;
       }
     }
 
