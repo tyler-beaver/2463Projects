@@ -1,4 +1,4 @@
-let spriteSheetFilenames = ["badBug.png", "GoodBug.png"];
+let spriteSheetFilenames = ["BadBug.png", "GoodBug.png"];
 let spriteSheets = [];
 let animations = [];
 
