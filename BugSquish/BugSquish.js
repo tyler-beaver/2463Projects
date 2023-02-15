@@ -84,9 +84,11 @@ function draw() {
 
 function keyPressed() {
   switch(game.state) {
+
     case GameState.Start:
       game.state = GameState.Playing;
       break;
+      
     case GameState.GameOver:
       reset();
       game.state = GameState.Playing;
