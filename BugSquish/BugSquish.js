@@ -14,7 +14,6 @@ function preload(){
   for (let i = 0; i < spriteSheetFilenames.length; i++) {
     spriteSheets[i] = loadImage("assets/" + spriteSheetFilenames[i]);
   }
- 
 }
 
 function setup() {
@@ -120,7 +119,6 @@ function mousePressed() {
       }
     }
       break;
-      
   }
 }
 
