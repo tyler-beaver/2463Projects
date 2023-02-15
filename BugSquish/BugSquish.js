@@ -53,7 +53,6 @@ function draw() {
       if (currentTime < 0) {
         game.state = GameState.GameOver;
       }
-
       break;
 
     case GameState.GameOver:
@@ -67,6 +66,7 @@ function draw() {
       text("Score: " + game.score, 350, 350);
       text("Max Score: " + game.maxScore, 350, 400)
       break;
+
     case GameState.Start:
       background(0);
       fill(255);
