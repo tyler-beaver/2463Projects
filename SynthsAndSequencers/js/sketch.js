@@ -1,7 +1,19 @@
-const synth = new Tone.DuoSynth();
+let slider;
+const synth = new Tone.PluckSynth();
+const reverb = new Tone.JCReverb(0.4);
+
+synth.connect(reverb);
+
+const osc = new Tone.OmniOscillator("C#4", "pwm").start();
+
+const ampEnv = new Tone.AmplitudeEnvelope({
+  attack: 0.5,
+  decay: 0.6,
+  sustain: 0.3,
+  release: 0.2
+})
 
 let notes = {
-
   'a': 'C4',
   's': 'D4',
   'd': 'E4',
@@ -10,12 +22,23 @@ let notes = {
   'h': 'A4',
   'j': 'B4',
   'k': 'C5'
-
 }
 
 function setup() {
   createCanvas(400, 400);
-  synth.toDestination();
+
+  slider = new Nexus.Slider("#slider");
+  reverb.toDestination();
+
+  synth.release = 2;
+  synth.resonance = 0.98;
+
+  slider.on('change', (v) =>  {
+    reverb.roomSize.value = v;
+  }); 
+
+  osc.connect(ampEnv);
+  ampEnv.connect(reverb);
 }
 
 function draw() {
@@ -23,8 +46,10 @@ function draw() {
 }
 
 function keyPressed() {
-  let whatNote = notes[key]
-  // console.log(whatNote);
-  synth.harmonicity.value = 0.3;
-  synth.triggerAttackRelease(whatNote, "8n");
+  let toPlay = notes[key];
+
+  osc.frequency.value = toPlay;
+
+  ampEnv.triggerAttackRelease('8n');
+  synth.triggerAttackRelease(toPlay, 0.5);
 }
