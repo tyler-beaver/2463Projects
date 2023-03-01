@@ -43,6 +43,9 @@ function setup() {
 
 function draw() {
   background(220);
+  text('Press The Buttons For Sound!', 110, 200)
+  text('A S D F G H J K', 150, 220)
+  text('Use The Slider To Adjust The Reverb!', 90, 240)
 }
 
 function keyPressed() {
