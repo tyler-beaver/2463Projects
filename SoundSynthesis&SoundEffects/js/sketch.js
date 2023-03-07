@@ -1,5 +1,6 @@
 let initTone = true;
-let pitch = 600
+let pitch = 900
+let img; 
 
 // Set up Tone
 let osc = new Tone.AMOscillator(pitch, 'sine', 'sine').start();
@@ -21,22 +22,24 @@ let noiseEnv = new Tone.AmplitudeEnvelope({
   release: 0.8
 }).connect(gain);
 
-let noiseFilter = new Tone.Filter(800, "lowpass").connect(noiseEnv);
+let noiseFilter = new Tone.Filter(700, "lowpass").connect(noiseEnv);
 noise.connect(noiseFilter)
 
+ 
+function preload() {
+  img = loadImage("assets/heavyRain.png");
+}
+
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(600, 600);
 }
 
 function draw() {
   background(220);
+  image(img, 0, 10);
 
-  if ((frameCount % 60) === 0) {
-    pitch = random(300, 1000);
-  }
-
-  text('press spacebar to initialize audio!', 100, 100);
-
+  text('press spacebar to initialize audio!', 200, 300);
+  text('then click rapidly to create heavy rain!', 180, 320);
 }
 
 function keyPressed() {
@@ -49,11 +52,11 @@ function keyPressed() {
 
 function mousePressed() {
   console.log('pressed');
-  ampEnv.triggerAttackRelease('4n');
-  osc.frequency.setValueAtTime(pitch+200, '+1');
-  ampEnv.triggerAttackRelease('4n', '+1');
+  // ampEnv.triggerAttackRelease('4n');
+  // osc.frequency.setValueAtTime(pitch+200, '+1');
+  // ampEnv.triggerAttackRelease('4n', '+1');
 
-  if (mouseY > 200) {
+  if (mouseY) {
     noiseEnv.triggerAttackRelease(0.5);
   }
 
