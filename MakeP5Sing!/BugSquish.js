@@ -1,12 +1,24 @@
-import { Tone } from "./libraries/Tone";
+import Tone from "../libraries/Tone.js";
 
 let spriteSheetFilenames = ["BadBug.png", "GoodBug.png"];
 let spriteSheets = [];
 let animations = [];
 
-let soundSquish = new Tone.Player("assets/squish.wav");
-let wrongBuzzer = new Tone.Player("assets/wrongBuzzer.wav");
-let peaceful = new Tone.Player("assets/peaceful.wav");
+let soundSquish = new Tone.Player("assets/squish.wav", () => {
+  soundSquish.toDestination();
+  soundSquish.start();
+});
+
+let wrongBuzzer = new Tone.Player("assets/wrongBuzzer.wav", () => {
+  wrongBuzzer.toDestination();
+  wrongBuzzer.start();
+});
+
+let peaceful = new Tone.Player("assets/peaceful.wav", () => {
+  peaceful.toDestination();
+  peaceful.start();
+});
+
 
 const GameState = {
   Start: "Start",
