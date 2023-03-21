@@ -28,8 +28,6 @@ function setup() {
   createCanvas(700, 600);
   imageMode(CENTER);
   angleMode(DEGREES);
-  peaceful.loop = true;
-peaceful.start();
   reset();
 }
 
@@ -96,6 +94,7 @@ function keyPressed() {
   switch(game.state) {
 
     case GameState.Start:
+      peaceful.start();
       game.state = GameState.Playing;
       break;
       
