@@ -1,103 +1,59 @@
 let port;
-let writer, reader;
-let slider; 
-let red, green, blue;
-let sensorData = {};
-const encoder = new TextEncoder();
-const decorder = new TextDecoder();
-
-let activationState = { active: false };
+let writer;
+let activationState = { active: false, inputValue: 0 };
 
 function setup() {
   createCanvas(400, 400);
-
   if ("serial" in navigator) {
-    // The Web Serial API is supported.
     let button = createButton("connect");
-    button.position(0,0);
+    button.position(0, 0);
     button.mousePressed(connect);
-
-    slider = createSlider(0, 255, 127);
-    slider.position(10,50);
-    slider.style('width', '100px'); 
   }
-}
-
-function keyTyped() {
-  if (key === 'a') {
+  document.addEventListener('mousedown', () => {
     activationState.active = !activationState.active;
-    serialWrite(activationState);
-  }
-}
-
-function mouseMoved() {
-  red = round(map(mouseX,0,width,0,255));
-  green = round(map(mouseY,0,height,0,255));
-  blue = slider.value();
-}
-
-function draw() {
-  background(220);
-
-  if (reader) {
-    serialRead();
-  }
-
-  if (activationState.active) {
-    text("cm: " + sensorData.cm, 10, 100);
-    text("inches: " + sensorData.inches, 10, 150);
-  }
-
-}
-
-function serialWrite(jsonObject) {
-  if (writer) {
-    writer.write(encoder.encode(JSON.stringify(jsonObject)+"\n"));
-  }
-}
-
-async function serialRead() {
-  while(true) {
-    const { value, done } = await reader.read();
-    if (done) {
-      reader.releaseLock();
-      break;
-    }
-    console.log(value);
-    sensorData = JSON.parse(value);
-  }
+    writer.write(new Uint8Array([activationState.active ? 255 : 0]));
+  });
 }
 
 async function connect() {
   port = await navigator.serial.requestPort();
-
   await port.open({ baudRate: 9600 });
-
   writer = port.writable.getWriter();
 
-  reader = port.readable
-    .pipeThrough(new TextDecoderStream())
-    .pipeThrough(new TransformStream(new LineBreakTransformer()))
-    .getReader();
+  // print connection message to console
+  console.log("Connected to serial port");
+
+  // start reading data from the serial port
+  readLoop();
 }
 
-class LineBreakTransformer {
-  constructor() {
-    // A container for holding stream data until a new line.
-    this.chunks = "";
+async function readLoop() {
+  const reader = port.readable.getReader();
+  
+  while (true) {
+    try {
+      const { value, done } = await reader.read();
+      if (done) {
+        console.log('Serial port closed');
+        reader.releaseLock();
+        break;
+      }
+      activationState.inputValue = value[0];
+      console.log("Input value: " + activationState.inputValue);
+    } catch (error) {
+      console.error(error);
+      reader.releaseLock();
+      break;
+    }
   }
+}
 
-  transform(chunk, controller) {
-    // Append new chunks to existing chunks.
-    this.chunks += chunk;
-    // For each line breaks in chunks, send the parsed lines out.
-    const lines = this.chunks.split("\n");
-    this.chunks = lines.pop();
-    lines.forEach((line) => controller.enqueue(line));
-  }
-
-  flush(controller) {
-    // When the stream is closed, flush any remaining chunks out.
-    controller.enqueue(this.chunks);
+function draw() {
+  let brightness = map(activationState.inputValue, 0, 1023, 0, 100);
+  let colorValue = map(activationState.inputValue, 0, 1023, 0, 255);
+  if (brightness > 50) {
+    background(255 - colorValue);
+  } else {
+    background(colorValue, 10, 200);
   }
 }
