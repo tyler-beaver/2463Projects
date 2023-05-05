@@ -13,24 +13,26 @@ var score = 0;
 var highScore = 0;
 var doodlerLeftImg;
 var doodlerRightImg;
+var doodlerNormalImg;
 var platformImg;
 
 //  Preload the Image Sprites
 function preload() {
-  doodlerLeftImg = loadImage("https://raw.githubusercontent.com/JasonMize/coding-league-assets/master/doodle-jump-doodler.png");
-  doodlerRightImg = loadImage("https://raw.githubusercontent.com/JasonMize/coding-league-assets/master/doodle-jump-doodler-right.png");
-  platformImg = loadImage("https://raw.githubusercontent.com/JasonMize/coding-league-assets/master/doodle-jump-platform.png");
+  doodlerLeftImg = loadImage("assets/leftChar.png");
+  doodlerRightImg = loadImage("assets/rightChar.png");
+  doodlerNormalImg = loadImage("assets/normalChar.png");
+  platformImg = loadImage("assets/regLog.png");
 }
 
 //  Controllers
 function setup() {
   createCanvas(600, 600);
   frameRate(60);
-  gameStarted = false;
+  gameStarted = false; 
 }
 
 function draw() {
-  background(247, 239, 231);
+  background(240);
   if(gameStarted == true) {
     //Set up and draw the game
     drawPlatforms();
@@ -39,7 +41,7 @@ function draw() {
     moveDoodler();
     moveScreen();
     textSize(25);
-    fill(0, 102, 153);
+    fill(0);
     text("Score: " + score, 500, 50);
   } else {
     // Start menu
@@ -84,7 +86,12 @@ function keyPressed() {
 //  Doodler
 function drawDoodler() {
   fill(204, 200, 52);
-  image(doodlerLeftImg, doodlerX, doodlerY, doodlerSize, doodlerSize);
+  if(keyIsDown(LEFT_ARROW)) {
+    image(doodlerLeftImg, doodlerX, doodlerY, doodlerSize+20, doodlerSize+20);
+  } else if(keyIsDown(RIGHT_ARROW)) {
+    image(doodlerRightImg, doodlerX, doodlerY, doodlerSize+20, doodlerSize+20);
+  } else
+    image(doodlerNormalImg, doodlerX, doodlerY, doodlerSize+20, doodlerSize+20);
 }
 
 function moveDoodler() {
@@ -138,9 +145,9 @@ function checkCollision() {
   platformList.forEach(function(plat) {
     if(
       doodlerX < plat.xPos + plat.width &&
-      doodlerX + doodlerSize > plat.xPos &&
-      doodlerY + doodlerSize < plat.yPos + plat.height &&
-      doodlerY + doodlerSize > plat.yPos &&
+      doodlerX + doodlerSize+20 > plat.xPos &&
+      doodlerY + doodlerSize+20 < plat.yPos + plat.height &&
+      doodlerY + doodlerSize+20 > plat.yPos &&
       doodlerVelocity > 0
     ) {
       doodlerVelocity = -10;
