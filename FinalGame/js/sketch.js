@@ -38,22 +38,25 @@ function draw() {
     checkCollision();
     moveDoodler();
     moveScreen();
-    textSize(20);
+    textSize(25);
+    fill(0, 102, 153);
     text("Score: " + score, 500, 50);
   } else {
     // Start menu
     fill(0);
     textSize(60);
     textAlign(CENTER, CENTER);
-    text("Let's Jump", width/2, height/2 - 100);
+    text("Jump", width/2, height/2 - 100);
     textSize(30);
     text("Score: " + score, width/2, height/2 - 50);
     textSize(30);
     text("High Score: " + highScore, width/2, height/2 - 15);
-    textSize(15);
+    textSize(30);
     text("Game Directions:", width/2, height/2 + 80);
-    text("Click Any button to begin", width/2, height/2 + 110);
-    text("Score depends on the distance traveled, but be careful ", width/2, height/2 + 130);
+    textSize(15);
+    text("Click Any Button To Begin!", width/2, height/2 + 110);
+    text("Use The Left and Right Arrow Keys To Move", width/2, height/2 + 130);
+    text("Increase Your Score The Furher You Go, But Be Careful Don't Fall", width/2, height/2 + 150);
   }
 }
 
