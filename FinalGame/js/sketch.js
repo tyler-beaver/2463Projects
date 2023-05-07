@@ -15,6 +15,7 @@ var doodlerLeftImg;
 var doodlerRightImg;
 var doodlerNormalImg;
 var platformImg;
+var springImg;
 
 //  Preload the Image Sprites
 function preload() {
@@ -22,6 +23,7 @@ function preload() {
   doodlerRightImg = loadImage("assets/rightChar.png");
   doodlerNormalImg = loadImage("assets/normalChar.png");
   platformImg = loadImage("assets/regLog.png");
+  springImg = loadImage("assets/spring.png");
 }
 
 //  Controllers
@@ -140,32 +142,31 @@ function Platform(newPlatformYPosition) {
   this.height = platformHeight;
 }
 
-//  Collisions
 function checkCollision() {
   platformList.forEach(function(plat) {
-    if(
-      doodlerX < plat.xPos + plat.width &&
-      doodlerX + doodlerSize+20 > plat.xPos &&
-      doodlerY + doodlerSize+20 < plat.yPos + plat.height &&
-      doodlerY + doodlerSize+20 > plat.yPos &&
+    if (
+      doodlerX + doodlerSize / 2 > plat.xPos && // doodler right edge > platform left edge
+      doodlerX + doodlerSize / 2 < plat.xPos + plat.width && // doodler left edge < platform right edge
+      doodlerY + doodlerSize + 15> plat.yPos && // doodler bottom edge > platform top edge
+      doodlerY + doodlerSize < plat.yPos + plat.height && // doodler top edge < platform bottom edge
       doodlerVelocity > 0
     ) {
       doodlerVelocity = -10;
     }
   });
-  
-  if(doodlerY > height) {
-    if(score > highScore) {
+
+  if (doodlerY > height) {
+    if (score > highScore) {
       highScore = score;
     }
     gameStarted = false;
     platformList = [];
   }
-  
+
   // screen wraps from left to right
-  if(doodlerX < -doodlerSize) {
+  if (doodlerX < -doodlerSize) {
     doodlerX = width;
-  } else if(doodlerX > width) {
+  } else if (doodlerX > width) {
     doodlerX = -doodlerSize;
   }
 }
