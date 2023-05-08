@@ -5,7 +5,7 @@ var doodlerVelocity;
 var doodlerXSpeed = 4;
 var platformWidth = 85;
 var platformHeight = 15;
-var numOfPlatforms = 5;
+var numOfPlatforms = 7;
 var platformList = [];
 var platYChange = 0;
 var gameStarted;
@@ -28,7 +28,7 @@ function preload() {
 
 //  Controllers
 function setup() {
-  createCanvas(600, 600);
+  createCanvas(600, 850);
   frameRate(60);
   gameStarted = false; 
 }
@@ -78,7 +78,7 @@ function keyPressed() {
   if(gameStarted == false) {
     score = 0;
     setupPlatforms();
-    doodlerY = 350;
+    doodlerY = 550;
     doodlerX = platformList[platformList.length - 1].xPos + 15;
     doodlerVelocity = 0.1;
     gameStarted = true;
@@ -119,6 +119,14 @@ function setupPlatforms() {
   }
 }
 
+function Platform(newPlatformYPosition) {
+  this.xPos = random(15, 500);
+  this.yPos = newPlatformYPosition;
+  this.width = platformWidth;
+  this.height = platformHeight;
+  this.spring = random() < 0.1; // Set spring property to true for 10% of platforms
+}
+
 function drawPlatforms() {
   fill(106, 186, 40);
   platformList.forEach(function(plat) {
@@ -126,7 +134,20 @@ function drawPlatforms() {
     plat.yPos += platYChange;
     image(platformImg, plat.xPos, plat.yPos, plat.width, plat.height);
 
-    if(plat.yPos > 600) {
+    if(plat.spring) { // Check if the platform has a spring
+      image(springImg, plat.xPos, plat.yPos - 5, plat.width - 5, plat.height - 3); // Draw the springImg on the platform
+    }
+
+    // Check for collision with spring
+    if (doodlerX + doodlerSize / 2 > plat.xPos && 
+        doodlerX + doodlerSize / 2 < plat.xPos + plat.width && 
+        doodlerY + doodlerSize > plat.yPos && 
+        doodlerY + doodlerSize < plat.yPos + plat.height && 
+        plat.spring) {
+      doodlerVelocity = -15; // Set the doodler's velocity to a negative value to launch it
+    }
+
+    if(plat.yPos > 850) {
       score++;
       platformList.pop();
       var newPlat = new Platform(0);
@@ -135,23 +156,22 @@ function drawPlatforms() {
   });
 }
 
-function Platform(newPlatformYPosition) {
-  this.xPos = random(15, 500);
-  this.yPos = newPlatformYPosition;
-  this.width = platformWidth;
-  this.height = platformHeight;
-}
-
 function checkCollision() {
+  var isCollision = false;
+  
   platformList.forEach(function(plat) {
     if (
       doodlerX + doodlerSize / 2 > plat.xPos && // doodler right edge > platform left edge
       doodlerX + doodlerSize / 2 < plat.xPos + plat.width && // doodler left edge < platform right edge
       doodlerY + doodlerSize + 15> plat.yPos && // doodler bottom edge > platform top edge
-      doodlerY + doodlerSize < plat.yPos + plat.height && // doodler top edge < platform bottom edge
-      doodlerVelocity > 0
+      doodlerY + doodlerVelocity < plat.yPos + plat.height && doodlerVelocity > 0// doodler top edge < platform bottom edge
     ) {
-      doodlerVelocity = -10;
+      if(plat.spring && doodlerVelocity > 0) {
+        doodlerVelocity = -15;
+      } else {
+        doodlerVelocity = -10;
+      }
+      isCollision = true;
     }
   });
 
@@ -169,4 +189,5 @@ function checkCollision() {
   } else if (doodlerX > width) {
     doodlerX = -doodlerSize;
   }
+  return isCollision;
 }
