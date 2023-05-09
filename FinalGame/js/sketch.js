@@ -194,7 +194,7 @@ function drawPlatforms() {
       platformList.unshift(newPlat); // add to front
     }
   });
-  
+
   if (landedIndex > -1) {
     var landedPlatform = platformList[landedIndex];
     if (landedPlatform.type === 'time') {
@@ -208,10 +208,10 @@ function checkCollision() {
   for (var i = 0; i < platformList.length; i++) {
     var p = platformList[i];
     if (doodlerVelocity > 0 && // doodler is falling
-        doodlerY + doodlerSize + 20 > p.yPos && // doodler is above the platform
-        doodlerY + doodlerSize < p.yPos + p.height && // doodler is below the top of the platform
-        doodlerX + doodlerSize > p.xPos && // doodler is to the right of the left edge of the platform
-        doodlerX < p.xPos + p.width // doodler is to the left of the right edge of the platform
+      doodlerY + doodlerSize + 20 > p.yPos && // doodler is above the platform
+      doodlerY + doodlerSize < p.yPos + p.height && // doodler is below the top of the platform
+      doodlerX + doodlerSize > p.xPos && // doodler is to the right of the left edge of the platform
+      doodlerX < p.xPos + p.width // doodler is to the left of the right edge of the platform
     ) {
       platformSound.start();
       doodlerVelocity = -10;
