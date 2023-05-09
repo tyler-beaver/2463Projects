@@ -1,9 +1,9 @@
 var doodlerSize = 60;
 var doodlerVelocity, doodlerX, doodlerY;
-var doodlerXSpeed = 4;
+var doodlerXSpeed = 4.5;
 var platformWidth = 85;
 var platformHeight = 15;
-var numOfPlatforms = 10;
+var numOfPlatforms = 12;
 var platformList = [];
 var platYChange = 0;
 var gameStarted;
@@ -134,7 +134,7 @@ function Platform(newPlatformYPosition) {
   var typeRandom = random();
   if (typeRandom < 0.1) {
     this.type = 'time';
-  } else if (typeRandom < 0.6) {
+  } else if (typeRandom < 0.7) {
     this.type = 'normal';
   } else {
     this.type = 'speed';
