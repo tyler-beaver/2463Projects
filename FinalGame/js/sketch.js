@@ -205,36 +205,45 @@ function drawPlatforms() {
 }
 
 function checkCollision() {
-  var isCollision = false;
-  platformList.forEach(function (plat) {
-    if (
-      doodlerX + doodlerSize / 2 > plat.xPos && // doodler right edge > platform left edge
-      doodlerX + doodlerSize / 2 < plat.xPos + plat.width && // doodler left edge < platform right edge
-      doodlerY + doodlerSize + 15 > plat.yPos && // doodler bottom edge > platform top edge
-      doodlerY + doodlerVelocity < plat.yPos + plat.height && doodlerVelocity > 0// doodler top edge < platform bottom edge
+  for (var i = 0; i < platformList.length; i++) {
+    var p = platformList[i];
+    if (doodlerVelocity > 0 && // doodler is falling
+        doodlerY + doodlerSize + 10 > p.yPos && // doodler is above the platform
+        doodlerY + doodlerSize < p.yPos + p.height && // doodler is below the top of the platform
+        doodlerX + doodlerSize > p.xPos && // doodler is to the right of the left edge of the platform
+        doodlerX < p.xPos + p.width // doodler is to the left of the right edge of the platform
     ) {
-      if (plat.spring && doodlerVelocity > 0) {
+      platformSound.start();
+      doodlerVelocity = -10;
+      if (!p.landedOn) {
+        p.landedOn = true;
+        if (p.type === 'time') {
+          setTimeout(hideTimePlatform, 5000); // hide the timePlatformImg after 5 seconds
+        }
+      }
+      if (p.spring) {
         springSound.start();
         doodlerVelocity = -15;
-      } else {
-        platformSound.start();
-        doodlerVelocity = -10;
       }
-      isCollision = true;
+      score++;
+      break;
     }
-  });
-  if (doodlerY > height) {
-    if (score > highScore) {
-      highScore = score;
+    if (doodlerY > height) {
+      if (score > highScore) {
+        highScore = score;
+      }
+      gameStarted = false;
+      platformList = [];
     }
-    gameStarted = false;
-    platformList = [];
+    // screen wraps from left to right
+    if (doodlerX < -doodlerSize) {
+      doodlerX = width;
+    } else if (doodlerX > width) {
+      doodlerX = -doodlerSize;
+    }
   }
-  // screen wraps from left to right
-  if (doodlerX < -doodlerSize) {
-    doodlerX = width;
-  } else if (doodlerX > width) {
-    doodlerX = -doodlerSize;
-  }
-  return isCollision;
+}
+
+function hideTimePlatform() {
+  timePlatformImg.hide();
 }
