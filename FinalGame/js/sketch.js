@@ -3,7 +3,7 @@ var doodlerVelocity, doodlerX, doodlerY;
 var doodlerXSpeed = 4;
 var platformWidth = 85;
 var platformHeight = 15;
-var numOfPlatforms = 7;
+var numOfPlatforms = 10;
 var platformList = [];
 var platYChange = 0;
 var gameStarted;
@@ -210,7 +210,7 @@ function checkCollision() {
     if (doodlerVelocity > 0 && // doodler is falling
         doodlerY + doodlerSize + 20 > p.yPos && // doodler is above the platform
         doodlerY + doodlerSize < p.yPos + p.height && // doodler is below the top of the platform
-        doodlerX + doodlerSize / 2 > p.xPos && // doodler is to the right of the left edge of the platform
+        doodlerX + doodlerSize > p.xPos && // doodler is to the right of the left edge of the platform
         doodlerX < p.xPos + p.width // doodler is to the left of the right edge of the platform
     ) {
       platformSound.start();
@@ -218,13 +218,14 @@ function checkCollision() {
       if (!p.landedOn) {
         p.landedOn = true;
         if (p.type === 'time') {
-          setTimeout(hideTimePlatform, 5000); // hide the timePlatformImg after 5 seconds
+          setTimeout(hideTimePlatform, 1000); // hide the timePlatformImg after 5 seconds
         }
       }
       if (p.spring) {
         springSound.start();
         doodlerVelocity = -15;
       }
+      score++;
       break;
     }
     if (doodlerY > height) {
