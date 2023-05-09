@@ -117,7 +117,7 @@ function moveDoodler() {
 //  Platforms
 function setupPlatforms() {
   for (var i = 0; i < numOfPlatforms; i++) {
-    var platGap = height / numOfPlatforms + 2;
+    var platGap = height / numOfPlatforms;
     var newPlatformYPosition = i * platGap;
     var plat = new Platform(newPlatformYPosition);
     platformList.push(plat);
