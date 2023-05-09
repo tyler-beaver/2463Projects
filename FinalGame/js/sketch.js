@@ -225,7 +225,6 @@ function checkCollision() {
         springSound.start();
         doodlerVelocity = -15;
       }
-      score++;
       break;
     }
     if (doodlerY > height) {
