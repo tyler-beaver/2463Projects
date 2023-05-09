@@ -11,6 +11,8 @@ var score = 0;
 var highScore = 0;
 var doodlerNormalImg, doodlerLeftImg, doodlerRightImg;
 var platformImg, speedPlatformImg, timePlatformImg, springImg;
+var connectButton;
+var port, writer, reader;
 
 var platformSound = new Tone.Player("assets/platformSound.wav");
 platformSound.volume.value = -2;
@@ -27,7 +29,6 @@ function preload() {
   springImg = loadImage("assets/spring.png");
   speedPlatformImg = loadImage("assets/speedLog.png");
   timePlatformImg = loadImage("assets/timeLog.png");
-
   platformSound.toDestination();
   springSound.toDestination();
   backgroundSound.toDestination();
@@ -37,6 +38,9 @@ function setup() {
   createCanvas(600, 850);
   frameRate(60);
   gameStarted = false;
+  connectButton = createButton("connect");
+  connectButton.position(width/2 -250, height + 20);
+  connectButton.mousePressed(connect);
 }
 
 function draw() {
@@ -69,6 +73,27 @@ function draw() {
     text("Increase Your Score The Furher You Go, But Be Careful Don't Fall", width / 2, height / 2 + 150);
   }
 }
+
+async function serialRead() {
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) {
+      reader.releaseLock();
+      break;
+    }
+    sensorData = JSON.parse(value);
+  }
+ }
+ 
+ async function connect() {
+  port = await navigator.serial.requestPort();
+  await port.open({ baudRate: 9600 });
+  writer = port.writable.getWriter();
+  reader = port.readable
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(new TransformStream(new LineBreakTransformer()))
+    .getReader();
+ }
 
 function moveScreen() {
   if (doodlerY < 400) {
