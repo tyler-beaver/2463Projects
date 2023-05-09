@@ -117,7 +117,7 @@ function moveDoodler() {
 //  Platforms
 function setupPlatforms() {
   for (var i = 0; i < numOfPlatforms; i++) {
-    var platGap = height / numOfPlatforms;
+    var platGap = height / numOfPlatforms + 2;
     var newPlatformYPosition = i * platGap;
     var plat = new Platform(newPlatformYPosition);
     platformList.push(plat);
@@ -225,7 +225,6 @@ function checkCollision() {
         springSound.start();
         doodlerVelocity = -15;
       }
-      score++;
       break;
     }
     if (doodlerY > height) {
