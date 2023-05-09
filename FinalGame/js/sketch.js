@@ -1,7 +1,5 @@
 var doodlerSize = 60;
-var doodlerX;
-var doodlerY;
-var doodlerVelocity;
+var doodlerVelocity, doodlerX, doodlerY;
 var doodlerXSpeed = 4;
 var platformWidth = 85;
 var platformHeight = 15;
@@ -11,31 +9,39 @@ var platYChange = 0;
 var gameStarted;
 var score = 0;
 var highScore = 0;
-var doodlerLeftImg;
-var doodlerRightImg;
-var doodlerNormalImg;
-var platformImg;
-var springImg;
+var doodlerNormalImg, doodlerLeftImg, doodlerRightImg;
+var platformImg, speedPlatformImg, timePlatformImg, springImg;
 
-//  Preload the Image Sprites
+var platformSound = new Tone.Player("assets/platformSound.wav");
+platformSound.volume.value = -2;
+var springSound = new Tone.Player("assets/springSound.wav");
+var backgroundSound = new Tone.Player("assets/backgroundSound.wav");
+backgroundSound.loop = true; // loop the sound
+backgroundSound.volume.value = -6;
+
 function preload() {
   doodlerLeftImg = loadImage("assets/leftChar.png");
   doodlerRightImg = loadImage("assets/rightChar.png");
   doodlerNormalImg = loadImage("assets/normalChar.png");
   platformImg = loadImage("assets/regLog.png");
   springImg = loadImage("assets/spring.png");
+  speedPlatformImg = loadImage("assets/speedLog.png");
+  timePlatformImg = loadImage("assets/timeLog.png");
+
+  platformSound.toDestination();
+  springSound.toDestination();
+  backgroundSound.toDestination();
 }
 
-//  Controllers
 function setup() {
   createCanvas(600, 850);
   frameRate(60);
-  gameStarted = false; 
+  gameStarted = false;
 }
 
 function draw() {
   background(240);
-  if(gameStarted == true) {
+  if (gameStarted == true) {
     //Set up and draw the game
     drawPlatforms();
     drawDoodler();
@@ -50,34 +56,34 @@ function draw() {
     fill(0);
     textSize(60);
     textAlign(CENTER, CENTER);
-    text("Jump", width/2, height/2 - 100);
+    text("Jump", width / 2, height / 2 - 100);
     textSize(30);
-    text("Score: " + score, width/2, height/2 - 50);
+    text("Score: " + score, width / 2, height / 2 - 50);
     textSize(30);
-    text("High Score: " + highScore, width/2, height/2 - 15);
+    text("High Score: " + highScore, width / 2, height / 2 - 15);
     textSize(30);
-    text("Game Directions:", width/2, height/2 + 80);
+    text("Game Directions:", width / 2, height / 2 + 80);
     textSize(15);
-    text("Click Any Button To Begin!", width/2, height/2 + 110);
-    text("Use The Left and Right Arrow Keys To Move", width/2, height/2 + 130);
-    text("Increase Your Score The Furher You Go, But Be Careful Don't Fall", width/2, height/2 + 150);
+    text("Click Any Button To Begin!", width / 2, height / 2 + 110);
+    text("Use The Left and Right Arrow Keys To Move", width / 2, height / 2 + 130);
+    text("Increase Your Score The Furher You Go, But Be Careful Don't Fall", width / 2, height / 2 + 150);
   }
 }
 
 function moveScreen() {
-  if(doodlerY < 250) {
-    platYChange = 3;
+  if (doodlerY < 400) {
+    platYChange = 5; // Increase the value to make platforms move down faster
     doodlerVelocity += 0.25;
   } else {
     platYChange = 0;
   }
 }
 
-// Start Game
 function keyPressed() {
-  if(gameStarted == false) {
+  if (gameStarted == false) {
     score = 0;
     setupPlatforms();
+    backgroundSound.start();
     doodlerY = 550;
     doodlerX = platformList[platformList.length - 1].xPos + 15;
     doodlerVelocity = 0.1;
@@ -85,15 +91,14 @@ function keyPressed() {
   }
 }
 
-//  Doodler
 function drawDoodler() {
   fill(204, 200, 52);
-  if(keyIsDown(LEFT_ARROW)) {
-    image(doodlerLeftImg, doodlerX, doodlerY, doodlerSize+20, doodlerSize+20);
-  } else if(keyIsDown(RIGHT_ARROW)) {
-    image(doodlerRightImg, doodlerX, doodlerY, doodlerSize+20, doodlerSize+20);
+  if (keyIsDown(LEFT_ARROW)) {
+    image(doodlerLeftImg, doodlerX, doodlerY, doodlerSize + 20, doodlerSize + 20);
+  } else if (keyIsDown(RIGHT_ARROW)) {
+    image(doodlerRightImg, doodlerX, doodlerY, doodlerSize + 20, doodlerSize + 20);
   } else
-    image(doodlerNormalImg, doodlerX, doodlerY, doodlerSize+20, doodlerSize+20);
+    image(doodlerNormalImg, doodlerX, doodlerY, doodlerSize + 20, doodlerSize + 20);
 }
 
 function moveDoodler() {
@@ -111,7 +116,7 @@ function moveDoodler() {
 
 //  Platforms
 function setupPlatforms() {
-  for(var i=0; i < numOfPlatforms; i++) {
+  for (var i = 0; i < numOfPlatforms; i++) {
     var platGap = height / numOfPlatforms;
     var newPlatformYPosition = i * platGap;
     var plat = new Platform(newPlatformYPosition);
@@ -124,57 +129,100 @@ function Platform(newPlatformYPosition) {
   this.yPos = newPlatformYPosition;
   this.width = platformWidth;
   this.height = platformHeight;
-  this.spring = random() < 0.1; // Set spring property to true for 10% of platforms
+  this.spring = random() < 0.1;
+  this.landedOn = false; // Add a property to track if platform has been landed on before
+  var typeRandom = random();
+  if (typeRandom < 0.1) {
+    this.type = 'time';
+  } else if (typeRandom < 0.6) {
+    this.type = 'normal';
+  } else {
+    this.type = 'speed';
+    this.direction = random() < 0.5 ? 'left' : 'right';
+    this.startX = this.xPos;
+    this.endX = this.xPos + 200; // Change this value to control the range of motion
+  }
 }
 
 function drawPlatforms() {
-  fill(106, 186, 40);
-  platformList.forEach(function(plat) {
-    // move all platforms down
+  var landedIndex = -1;
+  platformList.forEach(function (plat) {
     plat.yPos += platYChange;
-    image(platformImg, plat.xPos, plat.yPos, plat.width, plat.height);
-
-    if(plat.spring) { // Check if the platform has a spring
-      image(springImg, plat.xPos, plat.yPos - 5, plat.width - 5, plat.height - 3); // Draw the springImg on the platform
+    if (plat.type === 'normal') {
+      image(platformImg, plat.xPos, plat.yPos, plat.width, plat.height);
+    } else if (plat.type === 'speed') {
+      image(speedPlatformImg, plat.xPos, plat.yPos, plat.width, plat.height);
+      if (plat.direction === 'left') {
+        plat.xPos -= 2;
+        if (plat.xPos < plat.startX) {
+          plat.direction = 'right';
+        }
+      } else {
+        plat.xPos += 2;
+        if (plat.xPos > plat.endX) {
+          plat.direction = 'left';
+        }
+      }
+    } else if (plat.type === 'time') {
+      if (!plat.landedOn) {
+        image(timePlatformImg, plat.xPos, plat.yPos, plat.width, plat.height);
+      }
+      else if (plat.landedOn && platformList.indexOf(plat) !== landedIndex) { // check if the platform's image has been removed
+        landedIndex = platformList.indexOf(plat);
+      }
     }
-
-    // Check for collision with spring
-    if (doodlerX + doodlerSize / 2 > plat.xPos && 
-        doodlerX + doodlerSize / 2 < plat.xPos + plat.width && 
-        doodlerY + doodlerSize > plat.yPos && 
-        doodlerY + doodlerSize < plat.yPos + plat.height && 
-        plat.spring) {
-      doodlerVelocity = -15; // Set the doodler's velocity to a negative value to launch it
+    if (plat.spring) {
+      image(springImg, plat.xPos, plat.yPos - 5, plat.width - 5, plat.height - 3);
     }
-
-    if(plat.yPos > 850) {
+    if (doodlerX + doodlerSize / 2 > plat.xPos &&
+      doodlerX + doodlerSize / 2 < plat.xPos + plat.width &&
+      doodlerY + doodlerSize > plat.yPos &&
+      doodlerY + doodlerSize < plat.yPos + plat.height &&
+      doodlerVelocity > 0) {
+      if (plat.spring) {
+        doodlerVelocity = -15;
+      } else {
+        doodlerVelocity = -10;
+      }
+      plat.landedOn = true;
+      landedIndex = platformList.indexOf(plat);
+    }
+    if (plat.yPos > 850) {
       score++;
       platformList.pop();
       var newPlat = new Platform(0);
       platformList.unshift(newPlat); // add to front
     }
   });
+  
+  if (landedIndex > -1) {
+    var landedPlatform = platformList[landedIndex];
+    if (landedPlatform.type === 'time') {
+      landedPlatform.landedOn = false;
+      platformList.splice(landedIndex, 1);
+    }
+  }
 }
 
 function checkCollision() {
   var isCollision = false;
-  
-  platformList.forEach(function(plat) {
+  platformList.forEach(function (plat) {
     if (
       doodlerX + doodlerSize / 2 > plat.xPos && // doodler right edge > platform left edge
       doodlerX + doodlerSize / 2 < plat.xPos + plat.width && // doodler left edge < platform right edge
-      doodlerY + doodlerSize + 15> plat.yPos && // doodler bottom edge > platform top edge
+      doodlerY + doodlerSize + 15 > plat.yPos && // doodler bottom edge > platform top edge
       doodlerY + doodlerVelocity < plat.yPos + plat.height && doodlerVelocity > 0// doodler top edge < platform bottom edge
     ) {
-      if(plat.spring && doodlerVelocity > 0) {
+      if (plat.spring && doodlerVelocity > 0) {
+        springSound.start();
         doodlerVelocity = -15;
       } else {
+        platformSound.start();
         doodlerVelocity = -10;
       }
       isCollision = true;
     }
   });
-
   if (doodlerY > height) {
     if (score > highScore) {
       highScore = score;
@@ -182,7 +230,6 @@ function checkCollision() {
     gameStarted = false;
     platformList = [];
   }
-
   // screen wraps from left to right
   if (doodlerX < -doodlerSize) {
     doodlerX = width;
